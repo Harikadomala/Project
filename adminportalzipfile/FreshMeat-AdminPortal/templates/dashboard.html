@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Fresh Meat | Premium Fresh Meat</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="brand">
+        <div class="brand-logo">
+            <img src="{{ url_for('static', filename='images/fresh-meat-logo.png') }}" alt="Premium Fresh Meat Logo">
+        </div>
+        <div class="brand-text">
+            <h2>Premium Fresh Meat</h2>
+            <small>Super Admin Panel</small>
+        </div>
+    </div>
+
+    <p class="menu-heading">MAIN MENU</p>
+
+    <nav>
+        <a href="{{ url_for('dashboard') }}" class="active"><span class="nav-icon">⌂</span> Dashboard</a>
+        <a href="{{ url_for('manage_records', module='customers') }}"><span class="nav-icon">👥</span> Customers</a>
+        <a href="{{ url_for('manage_people', module='sellers') }}"><span class="nav-icon">🏪</span> Sellers</a>
+        <a href="{{ url_for('manage_people', module='riders') }}"><span class="nav-icon">🛵</span> Riders</a>
+        <a href="{{ url_for('manage_records', module='products') }}"><span class="nav-icon">📦</span> Products</a>
+        <a href="{{ url_for('manage_records', module='orders') }}"><span class="nav-icon">🛒</span> Orders</a>
+        <a href="{{ url_for('reports') }}"><span class="nav-icon">📊</span> Reports</a>
+        <a href="{{ url_for('notifications') }}"><span class="nav-icon">🔔</span> Notifications</a>
+        <a href="{{ url_for('settings') }}"><span class="nav-icon">⚙️</span> Settings</a>
+    </nav>
+
+    <div class="sidebar-profile">
+        <div class="profile-avatar">
+            {{ session.get('admin_username', 'A')[0]|upper }}
+        </div>
+        <div>
+            <strong>{{ session.get('admin_username', 'Admin') }}</strong>
+            <small>Super Administrator</small>
+        </div>
+    </div>
+</aside>
+
+<main class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <button type="button" class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+            <div class="topbar-title">
+                <h1>Premium Fresh Meat</h1>
+                <p>Super Admin Control Center</p>
+            </div>
+        </div>
+
+        <div class="topbar-actions">
+            <a href="{{ url_for('notifications') }}" class="notification-button" title="Notifications">🔔</a>
+            <a href="{{ url_for('logout') }}" class="logout-button">↪ Logout</a>
+        </div>
+    </header>
+
+    <div class="content">
+        <!-- WELCOME HERO BANNER -->
+        <section class="welcome-section">
+            <div class="welcome-text">
+                <div class="hero-badge"><span class="hero-badge-dot"></span> Executive Operations Hub</div>
+                <h2>
+                    Welcome Back,
+                    <span>{{ session.get('admin_username', 'Admin')|replace('_', ' ')|title }}!</span>
+                </h2>
+                <p>
+                    Oversee customers, verify sellers and delivery riders, monitor fresh catalog inventory, and track platform orders from one unified dashboard.
+                </p>
+                <div class="hero-actions">
+                    <a href="{{ url_for('reports') }}" class="report-button">📊 View Analytics & Reports →</a>
+                    <a href="{{ url_for('manage_people', module='sellers') }}" class="hero-secondary-btn">Review Approvals</a>
+                </div>
+            </div>
+
+            <div class="hero-emblem-card">
+                <div class="emblem-circle">
+                    <img src="{{ url_for('static', filename='images/fresh-meat-logo.png') }}" alt="Premium Fresh Meat">
+                </div>
+                <strong>Premium Fresh Meat</strong>
+                <span>Marketplace Control</span>
+            </div>
+        </section>
+
+        <!-- DASHBOARD STATISTICS -->
+        <section class="stats-container">
+            <a class="stat-card customers" href="{{ url_for('manage_records', module='customers') }}">
+                <div class="stat-icon">👥</div>
+                <div class="stat-info">
+                    <h3>Total Customers</h3>
+                    <h2>{{ stats.customers }}</h2>
+                    <span class="view-link">View All →</span>
+                </div>
+            </a>
+
+            <a class="stat-card sellers" href="{{ url_for('manage_people', module='sellers') }}">
+                <div class="stat-icon">🏪</div>
+                <div class="stat-info">
+                    <h3>Total Sellers</h3>
+                    <h2>{{ stats.sellers }}</h2>
+                    <span class="view-link">View All →</span>
+                </div>
+            </a>
+
+            <a class="stat-card riders" href="{{ url_for('manage_people', module='riders') }}">
+                <div class="stat-icon">🛵</div>
+                <div class="stat-info">
+                    <h3>Total Riders</h3>
+                    <h2>{{ stats.riders }}</h2>
+                    <span class="view-link">View All →</span>
+                </div>
+            </a>
+
+            <a class="stat-card products" href="{{ url_for('manage_records', module='products') }}">
+                <div class="stat-icon">📦</div>
+                <div class="stat-info">
+                    <h3>Total Products</h3>
+                    <h2>{{ stats.products }}</h2>
+                    <span class="view-link">View All →</span>
+                </div>
+            </a>
+
+            <a class="stat-card orders" href="{{ url_for('manage_records', module='orders') }}">
+                <div class="stat-icon">🛒</div>
+                <div class="stat-info">
+                    <h3>Total Orders</h3>
+                    <h2>{{ stats.orders }}</h2>
+                    <span class="view-link">View All →</span>
+                </div>
+            </a>
+
+            <div class="stat-card revenue">
+                <div class="stat-icon">₹</div>
+                <div class="stat-info">
+                    <h3>Total Revenue</h3>
+                    <h2>₹{{ stats.revenue }}</h2>
+                    <span class="view-link">Order Summary</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- BOTTOM DASHBOARD PANELS -->
+        <section class="dashboard-bottom">
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3>Pending Approvals</h3>
+                    <a href="{{ url_for('manage_people', module='sellers') }}">View All →</a>
+                </div>
+
+                <div class="panel-row">
+                    <span>🏪 Seller Approvals</span>
+                    <strong>{{ stats.pending_sellers }}</strong>
+                </div>
+
+                <div class="panel-row">
+                    <span>🛵 Rider Approvals</span>
+                    <strong>{{ stats.pending_riders }}</strong>
+                </div>
+
+                <div class="panel-row">
+                    <span>📦 Product Approvals</span>
+                    <strong>{{ stats.pending_products }}</strong>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>Order Overview</h3>
+
+                <div class="panel-row">
+                    <a href="{{ url_for('manage_records', module='orders') }}">🕒 Pending Orders</a>
+                    <strong>{{ stats.pending_orders }}</strong>
+                </div>
+
+                <div class="panel-row">
+                    <a href="{{ url_for('manage_records', module='orders') }}">✅ Completed Orders</a>
+                    <strong>{{ stats.completed_orders }}</strong>
+                </div>
+            </div>
+
+            <div class="panel revenue-panel">
+                <div class="revenue-top">
+                    <h3>Sales Overview</h3>
+                    <span>Order Summary</span>
+                </div>
+
+                <div class="revenue-content">
+                    <div class="revenue-total">
+                        ₹{{ stats.revenue }}
+                        <small>Total Revenue</small>
+                    </div>
+
+                    <p class="revenue-note">
+                        Consolidated order volume across active Premium Fresh Meat sellers and delivery partners.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <span>© 2026 <strong>Premium Fresh Meat</strong> Admin Panel. All Rights Reserved.</span>
+        <span>Quality Meat. Freshness You Can Trust.</span>
+    </footer>
+</main>
+
+<script>
+function toggleSidebar() {
+    if (window.innerWidth <= 760) {
+        document.body.classList.toggle("mobile-menu-open");
+    } else {
+        document.body.classList.toggle("sidebar-closed");
+    }
+}
+</script>
+
+</body>
+</html>

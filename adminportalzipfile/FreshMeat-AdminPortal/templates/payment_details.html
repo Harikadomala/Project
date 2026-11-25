@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Details | Premium Fresh Meat</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="brand">
+        <div class="brand-logo">
+            <img src="{{ url_for('static', filename='images/fresh-meat-logo.png') }}" alt="Premium Fresh Meat Logo">
+        </div>
+        <div class="brand-text">
+            <h2>Premium Fresh Meat</h2>
+            <small>Super Admin Panel</small>
+        </div>
+    </div>
+
+    <p class="menu-heading">MAIN MENU</p>
+
+    <nav>
+        <a href="{{ url_for('dashboard') }}"><span class="nav-icon">⌂</span> Dashboard</a>
+        <a href="{{ url_for('manage_records', module='customers') }}"><span class="nav-icon">👥</span> Customers</a>
+        <a href="{{ url_for('manage_people', module='sellers') }}"><span class="nav-icon">🏪</span> Sellers</a>
+        <a href="{{ url_for('manage_people', module='riders') }}"><span class="nav-icon">🛵</span> Riders</a>
+        <a href="{{ url_for('manage_records', module='products') }}"><span class="nav-icon">📦</span> Products</a>
+        <a href="{{ url_for('manage_records', module='orders') }}" class="active"><span class="nav-icon">🛒</span> Orders</a>
+        <a href="{{ url_for('reports') }}"><span class="nav-icon">📊</span> Reports</a>
+        <a href="{{ url_for('notifications') }}"><span class="nav-icon">🔔</span> Notifications</a>
+        <a href="{{ url_for('settings') }}"><span class="nav-icon">⚙️</span> Settings</a>
+    </nav>
+
+    <div class="sidebar-profile">
+        <div class="profile-avatar">
+            {{ session.get('admin_username', 'A')[0]|upper }}
+        </div>
+        <div>
+            <strong>{{ session.get('admin_username', 'Admin') }}</strong>
+            <small>Super Administrator</small>
+        </div>
+    </div>
+</aside>
+
+<main class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <button type="button" class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+            <div class="topbar-title">
+                <h1>Payment Details</h1>
+                <p>Premium Fresh Meat • Payment Audit & Reconciliation</p>
+            </div>
+        </div>
+
+        <div class="topbar-actions">
+            <a href="{{ url_for('notifications') }}" class="notification-button" title="Notifications">🔔</a>
+            <a href="{{ url_for('logout') }}" class="logout-button">↪ Logout</a>
+        </div>
+    </header>
+
+    <div class="content">
+        <div style="margin-bottom: 18px;">
+            <a class="back-btn" href="{{ url_for('manage_records', module='payments') }}">← Back to Payments</a>
+        </div>
+
+        <div class="card">
+            <h2>Payment Information</h2>
+            <div class="details">
+                <div class="item"><label>Payment ID</label><strong>#{{ payment['id'] }}</strong></div>
+                <div class="item"><label>Order ID</label><strong>#{{ payment['order_id'] }}</strong></div>
+                <div class="item"><label>Payment Amount</label><strong style="color:var(--orange);font-size:22px;">₹{{ payment['amount'] }}</strong></div>
+                <div class="item"><label>Payment Status</label><span class="status {{ payment['payment_status'] }}">{{ payment['payment_status'] }}</span></div>
+                <div class="item"><label>Payment Date</label><strong>{{ payment['created_at'] }}</strong></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Update Payment Status</h2>
+            <form method="POST" action="{{ url_for('manage_records', module='payments') }}" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;" onsubmit="return confirm('Are you sure you want to update this payment status?');">
+                <input type="hidden" name="record_id" value="{{ payment['id'] }}">
+                <select name="new_status" required style="min-width:200px;">
+                    <option value="Pending" {% if payment['payment_status'] == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="Completed" {% if payment['payment_status'] == 'Completed' %}selected{% endif %}>Completed</option>
+                    <option value="Failed" {% if payment['payment_status'] == 'Failed' %}selected{% endif %}>Failed</option>
+                </select>
+                <button type="submit" name="action" value="update" class="update-btn">Update Payment Status</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Related Order Information</h2>
+            {% if order %}
+            <div class="details">
+                <div class="item"><label>Order ID</label><strong>#{{ order['id'] }}</strong></div>
+                <div class="item"><label>Customer ID</label><strong>#{{ order['customer_id'] }}</strong></div>
+                <div class="item"><label>Order Amount</label><strong>₹{{ order['total_amount'] }}</strong></div>
+                <div class="item"><label>Order Status</label><strong>{{ order['status'] }}</strong></div>
+            </div>
+            {% else %}
+            <p style="color:var(--muted);">Related order information is not available.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer>
+        <span>© 2026 <strong>Premium Fresh Meat</strong> Admin Panel. All Rights Reserved.</span>
+        <span>Quality Meat. Freshness You Can Trust.</span>
+    </footer>
+</main>
+
+<script>
+function toggleSidebar() {
+    if (window.innerWidth <= 760) {
+        document.body.classList.toggle("mobile-menu-open");
+    } else {
+        document.body.classList.toggle("sidebar-closed");
+    }
+}
+</script>
+
+</body>
+</html>

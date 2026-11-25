@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ title }} Details | Premium Fresh Meat</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="brand">
+        <div class="brand-logo">
+            <img src="{{ url_for('static', filename='images/fresh-meat-logo.png') }}" alt="Premium Fresh Meat Logo">
+        </div>
+        <div class="brand-text">
+            <h2>Premium Fresh Meat</h2>
+            <small>Super Admin Panel</small>
+        </div>
+    </div>
+
+    <p class="menu-heading">MAIN MENU</p>
+
+    <nav>
+        <a href="{{ url_for('dashboard') }}"><span class="nav-icon">⌂</span> Dashboard</a>
+        <a href="{{ url_for('manage_records', module='customers') }}"><span class="nav-icon">👥</span> Customers</a>
+        <a href="{{ url_for('manage_people', module='sellers') }}" class="active"><span class="nav-icon">🏪</span> Sellers</a>
+        <a href="{{ url_for('manage_people', module='riders') }}"><span class="nav-icon">🛵</span> Riders</a>
+        <a href="{{ url_for('manage_records', module='products') }}"><span class="nav-icon">📦</span> Products</a>
+        <a href="{{ url_for('manage_records', module='orders') }}"><span class="nav-icon">🛒</span> Orders</a>
+        <a href="{{ url_for('reports') }}"><span class="nav-icon">📊</span> Reports</a>
+        <a href="{{ url_for('notifications') }}"><span class="nav-icon">🔔</span> Notifications</a>
+        <a href="{{ url_for('settings') }}"><span class="nav-icon">⚙️</span> Settings</a>
+    </nav>
+
+    <div class="sidebar-profile">
+        <div class="profile-avatar">
+            {{ session.get('admin_username', 'A')[0]|upper }}
+        </div>
+        <div>
+            <strong>{{ session.get('admin_username', 'Admin') }}</strong>
+            <small>Super Administrator</small>
+        </div>
+    </div>
+</aside>
+
+<main class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <button type="button" class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+            <div class="topbar-title">
+                <h1>{{ title }} Details</h1>
+                <p>Premium Fresh Meat • Partner Profile & KYC Review</p>
+            </div>
+        </div>
+
+        <div class="topbar-actions">
+            <a href="{{ url_for('notifications') }}" class="notification-button" title="Notifications">🔔</a>
+            <a href="{{ url_for('logout') }}" class="logout-button">↪ Logout</a>
+        </div>
+    </header>
+
+    <div class="content">
+        <div style="margin-bottom: 18px;">
+            <a class="back-btn" href="{{ url_for('manage_people', module=module) }}">← Back to {{ title }} List</a>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <div style="background:var(--green-soft);color:var(--green-dark);border-left:4px solid var(--green);padding:13px 16px;border-radius:10px;margin-bottom:18px;font-weight:600;">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        {% set current_status = person['status'] or 'Pending' %}
+
+        <!-- PROFILE OVERVIEW -->
+        <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:16px;">
+                <div>
+                    <h2 style="margin-bottom:4px;">{{ person['name'] or '-' }}</h2>
+                    <span style="color:var(--muted);font-size:13px;">Application ID: #{{ person['id'] }}</span>
+                </div>
+
+                <span class="status {% if current_status == 'Approved' %}status-approved{% elif current_status == 'Rejected' %}status-rejected{% elif current_status == 'Blocked' %}status-blocked{% endif %}">
+                    {{ current_status }}
+                </span>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail"><small>Full Name</small><strong>{{ person['name'] or '-' }}</strong></div>
+                <div class="detail"><small>Email Address</small><strong>{{ person['email'] or '-' }}</strong></div>
+                <div class="detail"><small>Phone Number</small><strong>{{ person['phone'] or '-' }}</strong></div>
+                {% if person['rejection_reason'] %}
+                <div class="detail"><small>Previous Review Reason</small><strong>{{ person['rejection_reason'] }}</strong></div>
+                {% endif %}
+                {% if person['reapply_after'] %}
+                <div class="detail"><small>Reapply After</small><strong>{{ person['reapply_after'] }}</strong></div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- PERSONAL / BUSINESS DETAILS -->
+        <div class="card">
+            <h3>Personal / Business Details</h3>
+            <div class="details-grid">
+                {% for key in person.keys() %}
+                    {% set value = person[key] %}
+                    {% if key not in ['id', 'name', 'email', 'phone', 'status', 'rejection_reason', 'reapply_after'] and 'document' not in key and 'photo' not in key %}
+                        <div class="detail">
+                            <small>{{ key|replace('_', ' ')|title }}</small>
+                            <strong>{{ value or '-' }}</strong>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- DOCUMENT VERIFICATION -->
+        <div class="card">
+            <h3>Document Verification</h3>
+            <p style="color:var(--muted);font-size:13px;margin-bottom:18px;">
+                View uploaded documents or upload/replace missing documents. Accepted formats: PDF, JPG, JPEG, PNG (Max 5 MB).
+            </p>
+
+            {% for key, value in documents.items() %}
+                <div style="padding:18px;border:1px solid var(--border);background:var(--cream);border-radius:12px;margin-bottom:14px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;">
+                        <div>
+                            <strong style="font-size:15px;color:var(--green-dark);">{{ key }}</strong>
+                            {% if value %}
+                                <div style="color:var(--green);font-size:12.5px;font-weight:600;margin-top:4px;">✓ Document uploaded</div>
+                            {% else %}
+                                <div style="color:var(--danger);font-size:12.5px;font-weight:600;margin-top:4px;">✕ Document not uploaded</div>
+                            {% endif %}
+                        </div>
+
+                        {% if value %}
+                            <a class="view-btn" href="{{ url_for('view_document', filename=value) }}" target="_blank">View Document</a>
+                        {% endif %}
+                    </div>
+
+                    <form style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center;"
+                          method="POST"
+                          enctype="multipart/form-data"
+                          action="{{ url_for('upload_person_document', module=module, record_id=person['id']) }}">
+                        <input type="file" name="{{ key }}" accept=".pdf,.png,.jpg,.jpeg" required style="flex:1;min-width:200px;">
+                        <button type="submit" class="primary-btn">
+                            {% if value %}Replace Document{% else %}Upload Document{% endif %}
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <p style="color:var(--muted);">No document fields available.</p>
+            {% endfor %}
+        </div>
+
+        <!-- APPLICATION REVIEW -->
+        <div class="card">
+            <h3>Application Review</h3>
+            <div style="background:var(--orange-soft);border-left:4px solid var(--orange);padding:13px 16px;border-radius:8px;margin-bottom:18px;color:var(--text);font-size:13.5px;">
+                Check the submitted details and documents before approving or rejecting this application.
+            </div>
+
+            <form method="POST" action="{{ url_for('review_person', module=module, record_id=person['id']) }}">
+                <label style="display:block;font-weight:600;margin-bottom:7px;">Application Decision</label>
+                <select name="action" id="status" required style="width:100%;max-width:420px;margin-bottom:16px;">
+                    <option value="Pending" {% if current_status == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="Approved" {% if current_status == 'Approved' %}selected{% endif %}>Approve Application</option>
+                    <option value="Rejected" {% if current_status == 'Rejected' %}selected{% endif %}>Reject Application</option>
+                    <option value="Blocked" {% if current_status == 'Blocked' %}selected{% endif %}>Block Application</option>
+                </select>
+
+                <div id="rejection-fields" style="display:none;max-width:540px;">
+                    <label style="display:block;font-weight:600;margin:12px 0 7px;">Reason for Rejection / Blocking *</label>
+                    <textarea name="rejection_reason" id="reason" rows="3" style="width:100%;margin-bottom:14px;" placeholder="Enter the reason clearly...">{{ person['rejection_reason'] or '' }}</textarea>
+
+                    <label style="display:block;font-weight:600;margin-bottom:7px;">Reapplication Cooldown Period</label>
+                    <select name="cooldown" id="cooldown" style="width:100%;margin-bottom:14px;">
+                        <option value="3">3 Months</option>
+                        <option value="6">6 Months</option>
+                        <option value="custom">Choose Custom Date</option>
+                    </select>
+
+                    <div id="custom-date" style="display:none;margin-bottom:14px;">
+                        <label style="display:block;font-weight:600;margin-bottom:7px;">Custom Reapplication Date *</label>
+                        <input type="date" name="custom_date" id="custom_date" style="width:100%;">
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" class="create-btn">Save Application Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <span>© 2026 <strong>Premium Fresh Meat</strong> Admin Panel. All Rights Reserved.</span>
+        <span>Quality Meat. Freshness You Can Trust.</span>
+    </footer>
+</main>
+
+<script>
+function toggleSidebar() {
+    if (window.innerWidth <= 760) {
+        document.body.classList.toggle("mobile-menu-open");
+    } else {
+        document.body.classList.toggle("sidebar-closed");
+    }
+}
+</script>
+<script>
+    const statusSelect = document.getElementById("status");
+    const rejectionFields = document.getElementById("rejection-fields");
+    const reason = document.getElementById("reason");
+    const cooldown = document.getElementById("cooldown");
+    const customDate = document.getElementById("custom-date");
+    const customDateInput = document.getElementById("custom_date");
+
+    function updateRejectionFields() {
+        const needsReason = statusSelect.value === "Rejected" || statusSelect.value === "Blocked";
+        rejectionFields.style.display = needsReason ? "block" : "none";
+        reason.required = needsReason;
+        cooldown.required = needsReason;
+        updateCustomDate();
+    }
+
+    function updateCustomDate() {
+        const isCustom = cooldown.value === "custom";
+        customDate.style.display = isCustom ? "block" : "none";
+        customDateInput.required = isCustom && (statusSelect.value === "Rejected" || statusSelect.value === "Blocked");
+    }
+
+    statusSelect.addEventListener("change", updateRejectionFields);
+    cooldown.addEventListener("change", updateCustomDate);
+    updateRejectionFields();
+</script>
+</body>
+</html>

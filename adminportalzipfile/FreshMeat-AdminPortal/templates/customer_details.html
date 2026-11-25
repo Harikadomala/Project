@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Details | Premium Fresh Meat</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="brand">
+        <div class="brand-logo">
+            <img src="{{ url_for('static', filename='images/fresh-meat-logo.png') }}" alt="Premium Fresh Meat Logo">
+        </div>
+        <div class="brand-text">
+            <h2>Premium Fresh Meat</h2>
+            <small>Super Admin Panel</small>
+        </div>
+    </div>
+
+    <p class="menu-heading">MAIN MENU</p>
+
+    <nav>
+        <a href="{{ url_for('dashboard') }}"><span class="nav-icon">⌂</span> Dashboard</a>
+        <a href="{{ url_for('manage_records', module='customers') }}" class="active"><span class="nav-icon">👥</span> Customers</a>
+        <a href="{{ url_for('manage_people', module='sellers') }}"><span class="nav-icon">🏪</span> Sellers</a>
+        <a href="{{ url_for('manage_people', module='riders') }}"><span class="nav-icon">🛵</span> Riders</a>
+        <a href="{{ url_for('manage_records', module='products') }}"><span class="nav-icon">📦</span> Products</a>
+        <a href="{{ url_for('manage_records', module='orders') }}"><span class="nav-icon">🛒</span> Orders</a>
+        <a href="{{ url_for('reports') }}"><span class="nav-icon">📊</span> Reports</a>
+        <a href="{{ url_for('notifications') }}"><span class="nav-icon">🔔</span> Notifications</a>
+        <a href="{{ url_for('settings') }}"><span class="nav-icon">⚙️</span> Settings</a>
+    </nav>
+
+    <div class="sidebar-profile">
+        <div class="profile-avatar">
+            {{ session.get('admin_username', 'A')[0]|upper }}
+        </div>
+        <div>
+            <strong>{{ session.get('admin_username', 'Admin') }}</strong>
+            <small>Super Administrator</small>
+        </div>
+    </div>
+</aside>
+
+<main class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <button type="button" class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+            <div class="topbar-title">
+                <h1>Customer Details</h1>
+                <p>Premium Fresh Meat • Customer Profile & Order History</p>
+            </div>
+        </div>
+
+        <div class="topbar-actions">
+            <a href="{{ url_for('notifications') }}" class="notification-button" title="Notifications">🔔</a>
+            <a href="{{ url_for('logout') }}" class="logout-button">↪ Logout</a>
+        </div>
+    </header>
+
+    <div class="content">
+        <div style="margin-bottom: 18px;">
+            <a class="back-btn" href="{{ url_for('manage_records', module='customers') }}">← Back to Customers</a>
+        </div>
+
+        <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:16px;">
+                <div>
+                    <h2 style="margin-bottom:4px;">{{ customer['name'] or 'Customer' }}</h2>
+                    <span style="color:var(--muted);font-size:13px;">Customer ID: #{{ customer['id'] }}</span>
+                </div>
+                <span class="status Approved">Verified Customer</span>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-item"><small>Customer ID</small><strong>#{{ customer['id'] }}</strong></div>
+                <div class="detail-item"><small>Full Name</small><strong>{{ customer['name'] or '-' }}</strong></div>
+                <div class="detail-item"><small>Email Address</small><strong>{{ customer['email'] or '-' }}</strong></div>
+                <div class="detail-item"><small>Phone Number</small><strong>{{ customer['mobile'] or '-' }}</strong></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Order Overview</h3>
+            <div class="details-grid">
+                <div class="summary-box">
+                    <small>Total Orders</small>
+                    <strong>{{ orders|length }}</strong>
+                </div>
+                <div class="summary-box">
+                    <small>Completed / Delivered Orders</small>
+                    <strong>
+                        {% set completed_count = namespace(value=0) %}
+                        {% for order in orders %}
+                            {% if order['order_status']|lower in ['completed', 'delivered'] %}
+                                {% set completed_count.value = completed_count.value + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ completed_count.value }}
+                    </strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Customer Order History</h3>
+            {% if orders %}
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Order Date</th>
+                                <th>Order Amount</th>
+                                <th>Order Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                                {% set order_status = order['order_status'] or 'N/A' %}
+                                <tr>
+                                    <td><strong>#{{ order['id'] }}</strong></td>
+                                    <td>{{ order['created_at'] or 'Not Available' }}</td>
+                                    <td><strong>₹{{ order['total_amount'] if order['total_amount'] is not none else 0 }}</strong></td>
+                                    <td><span class="order-status {{ order_status|lower }}">{{ order_status }}</span></td>
+                                    <td><a class="view-btn" href="{{ url_for('order_details', order_id=order['id']) }}">View Order</a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p style="color:var(--muted);padding:18px 0;">This customer has not placed any orders yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer>
+        <span>© 2026 <strong>Premium Fresh Meat</strong> Admin Panel. All Rights Reserved.</span>
+        <span>Quality Meat. Freshness You Can Trust.</span>
+    </footer>
+</main>
+
+<script>
+function toggleSidebar() {
+    if (window.innerWidth <= 760) {
+        document.body.classList.toggle("mobile-menu-open");
+    } else {
+        document.body.classList.toggle("sidebar-closed");
+    }
+}
+</script>
+
+</body>
+</html>

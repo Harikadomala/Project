@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ title }} | Premium Fresh Meat</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="brand">
+        <div class="brand-logo">
+            <img src="{{ url_for('static', filename='images/fresh-meat-logo.png') }}" alt="Premium Fresh Meat Logo">
+        </div>
+        <div class="brand-text">
+            <h2>Premium Fresh Meat</h2>
+            <small>Super Admin Panel</small>
+        </div>
+    </div>
+
+    <p class="menu-heading">MAIN MENU</p>
+
+    <nav>
+        <a href="{{ url_for('dashboard') }}"><span class="nav-icon">⌂</span> Dashboard</a>
+        <a href="{{ url_for('manage_records', module='customers') }}"><span class="nav-icon">👥</span> Customers</a>
+        <a href="{{ url_for('manage_people', module='sellers') }}" class="active"><span class="nav-icon">🏪</span> Sellers</a>
+        <a href="{{ url_for('manage_people', module='riders') }}"><span class="nav-icon">🛵</span> Riders</a>
+        <a href="{{ url_for('manage_records', module='products') }}"><span class="nav-icon">📦</span> Products</a>
+        <a href="{{ url_for('manage_records', module='orders') }}"><span class="nav-icon">🛒</span> Orders</a>
+        <a href="{{ url_for('reports') }}"><span class="nav-icon">📊</span> Reports</a>
+        <a href="{{ url_for('notifications') }}"><span class="nav-icon">🔔</span> Notifications</a>
+        <a href="{{ url_for('settings') }}"><span class="nav-icon">⚙️</span> Settings</a>
+    </nav>
+
+    <div class="sidebar-profile">
+        <div class="profile-avatar">
+            {{ session.get('admin_username', 'A')[0]|upper }}
+        </div>
+        <div>
+            <strong>{{ session.get('admin_username', 'Admin') }}</strong>
+            <small>Super Administrator</small>
+        </div>
+    </div>
+</aside>
+
+<main class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <button type="button" class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+            <div class="topbar-title">
+                <h1>{{ title }}</h1>
+                <p>Premium Fresh Meat • Partner Directory & Verification</p>
+            </div>
+        </div>
+
+        <div class="topbar-actions">
+            <a href="{{ url_for('notifications') }}" class="notification-button" title="Notifications">🔔</a>
+            <a href="{{ url_for('logout') }}" class="logout-button">↪ Logout</a>
+        </div>
+    </header>
+
+    <div class="content">
+        <div style="margin-bottom: 18px;">
+            <a class="back-btn" href="{{ url_for('dashboard') }}">← Back to Dashboard</a>
+        </div>
+
+        <div class="panel" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h2 style="margin-bottom:4px;">{{ title }} Management</h2>
+                <p style="color:var(--muted);font-size:13px;">Total Records: <strong style="color:var(--green-dark);">{{ rows|length }}</strong></p>
+            </div>
+
+            <form method="GET" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                <input type="text" name="search" value="{{ search }}" placeholder="Search name, email or phone" style="min-width:220px;">
+                <select name="status">
+                    {% for item in ['All','Pending','Approved','Rejected','Blocked'] %}
+                    <option value="{{ item }}" {% if selected_status == item %}selected{% endif %}>{{ item }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="primary-btn">Search / Filter</button>
+            </form>
+        </div>
+
+        <div class="table-box">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for person in rows %}
+                    <tr>
+                        <td>#{{ person['id'] }}</td>
+                        <td><strong>{{ person['name'] }}</strong></td>
+                        <td>{{ person['email'] or '-' }}</td>
+                        <td>{{ person['phone'] or '-' }}</td>
+                        <td>
+                            <span class="status {{ person['status'] }}">{{ person['status'] }}</span>
+                        </td>
+                        <td>
+                            <a class="primary-btn" style="padding:8px 14px;font-size:12.5px;" href="{{ url_for('person_details', module=module, record_id=person['id']) }}">
+                                Review &amp; Details →
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center;color:var(--muted);padding:32px;">No records found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <span>© 2026 <strong>Premium Fresh Meat</strong> Admin Panel. All Rights Reserved.</span>
+        <span>Quality Meat. Freshness You Can Trust.</span>
+    </footer>
+</main>
+
+<script>
+function toggleSidebar() {
+    if (window.innerWidth <= 760) {
+        document.body.classList.toggle("mobile-menu-open");
+    } else {
+        document.body.classList.toggle("sidebar-closed");
+    }
+}
+</script>
+
+</body>
+</html>

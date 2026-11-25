@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account Settings | Premium Fresh Meat</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="brand">
+        <div class="brand-logo">
+            <img src="{{ url_for('static', filename='images/fresh-meat-logo.png') }}" alt="Premium Fresh Meat Logo">
+        </div>
+        <div class="brand-text">
+            <h2>Premium Fresh Meat</h2>
+            <small>Super Admin Panel</small>
+        </div>
+    </div>
+
+    <p class="menu-heading">MAIN MENU</p>
+
+    <nav>
+        <a href="{{ url_for('dashboard') }}"><span class="nav-icon">⌂</span> Dashboard</a>
+        <a href="{{ url_for('manage_records', module='customers') }}"><span class="nav-icon">👥</span> Customers</a>
+        <a href="{{ url_for('manage_people', module='sellers') }}"><span class="nav-icon">🏪</span> Sellers</a>
+        <a href="{{ url_for('manage_people', module='riders') }}"><span class="nav-icon">🛵</span> Riders</a>
+        <a href="{{ url_for('manage_records', module='products') }}"><span class="nav-icon">📦</span> Products</a>
+        <a href="{{ url_for('manage_records', module='orders') }}"><span class="nav-icon">🛒</span> Orders</a>
+        <a href="{{ url_for('reports') }}"><span class="nav-icon">📊</span> Reports</a>
+        <a href="{{ url_for('notifications') }}"><span class="nav-icon">🔔</span> Notifications</a>
+        <a href="{{ url_for('settings') }}" class="active"><span class="nav-icon">⚙️</span> Settings</a>
+    </nav>
+
+    <div class="sidebar-profile">
+        <div class="profile-avatar">
+            {{ session.get('admin_username', 'A')[0]|upper }}
+        </div>
+        <div>
+            <strong>{{ session.get('admin_username', 'Admin') }}</strong>
+            <small>Super Administrator</small>
+        </div>
+    </div>
+</aside>
+
+<main class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <button type="button" class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+            <div class="topbar-title">
+                <h1>Account Settings</h1>
+                <p>Premium Fresh Meat • Administrator Security</p>
+            </div>
+        </div>
+
+        <div class="topbar-actions">
+            <a href="{{ url_for('notifications') }}" class="notification-button" title="Notifications">🔔</a>
+            <a href="{{ url_for('logout') }}" class="logout-button">↪ Logout</a>
+        </div>
+    </header>
+
+    <div class="content">
+        <div class="welcome-section" style="padding:26px 32px;">
+            <div class="welcome-text">
+                <div class="hero-badge"><span class="hero-badge-dot"></span> Security &amp; Access</div>
+                <h2 style="font-size:28px;">Account <span>Settings</span></h2>
+                <p>Manage your Premium Fresh Meat administrator profile and login credentials.</p>
+            </div>
+        </div>
+
+        <div class="card" style="max-width:680px;">
+            <h2>🔐 Administrator Credentials</h2>
+            <p style="color:var(--muted);font-size:13px;margin-bottom:18px;">
+                Update your administrator username and password.
+            </p>
+
+            {% if message %}
+                <div style="background:var(--green-soft);color:var(--green-dark);border-left:4px solid var(--green);padding:12px 15px;border-radius:8px;margin-bottom:16px;font-weight:600;">{{ message }}</div>
+            {% endif %}
+
+            <form method="POST">
+                <label style="display:block;font-weight:600;margin:14px 0 7px;" for="username">Administrator Username</label>
+                <input type="text" id="username" name="username" value="{{ admin['username'] if admin else '' }}" placeholder="Enter username" autocomplete="username" required style="width:100%;">
+
+                <label style="display:block;font-weight:600;margin:16px 0 7px;" for="old_password">Current Password</label>
+                <div style="position:relative;">
+                    <input type="password" name="old_password" id="old_password" placeholder="Enter current password" autocomplete="current-password" required style="width:100%;padding-right:70px;">
+                    <button type="button" onclick="togglePassword('old_password', this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;color:var(--green);padding:4px 8px;font-size:12px;">Show</button>
+                </div>
+
+                <label style="display:block;font-weight:600;margin:16px 0 7px;" for="new_password">New Password</label>
+                <div style="position:relative;">
+                    <input type="password" name="new_password" id="new_password" placeholder="Enter new password" minlength="4" autocomplete="new-password" required style="width:100%;padding-right:70px;">
+                    <button type="button" onclick="togglePassword('new_password', this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;color:var(--green);padding:4px 8px;font-size:12px;">Show</button>
+                </div>
+
+                <button type="submit" class="create-btn" style="margin-top:22px;">💾 Save Settings</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <span>© 2026 <strong>Premium Fresh Meat</strong> Admin Panel. All Rights Reserved.</span>
+        <span>Quality Meat. Freshness You Can Trust.</span>
+    </footer>
+</main>
+
+<script>
+function toggleSidebar() {
+    if (window.innerWidth <= 760) {
+        document.body.classList.toggle("mobile-menu-open");
+    } else {
+        document.body.classList.toggle("sidebar-closed");
+    }
+}
+</script>
+<script>
+function togglePassword(id, button) {
+    const field = document.getElementById(id);
+    if (field.type === "password") {
+        field.type = "text";
+        button.textContent = "Hide";
+    } else {
+        field.type = "password";
+        button.textContent = "Show";
+    }
+}
+</script>
+</body>
+</html>

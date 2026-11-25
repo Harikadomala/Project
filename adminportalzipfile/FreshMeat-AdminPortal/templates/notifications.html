@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications | Premium Fresh Meat</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="brand">
+        <div class="brand-logo">
+            <img src="{{ url_for('static', filename='images/fresh-meat-logo.png') }}" alt="Premium Fresh Meat Logo">
+        </div>
+        <div class="brand-text">
+            <h2>Premium Fresh Meat</h2>
+            <small>Super Admin Panel</small>
+        </div>
+    </div>
+
+    <p class="menu-heading">MAIN MENU</p>
+
+    <nav>
+        <a href="{{ url_for('dashboard') }}"><span class="nav-icon">⌂</span> Dashboard</a>
+        <a href="{{ url_for('manage_records', module='customers') }}"><span class="nav-icon">👥</span> Customers</a>
+        <a href="{{ url_for('manage_people', module='sellers') }}"><span class="nav-icon">🏪</span> Sellers</a>
+        <a href="{{ url_for('manage_people', module='riders') }}"><span class="nav-icon">🛵</span> Riders</a>
+        <a href="{{ url_for('manage_records', module='products') }}"><span class="nav-icon">📦</span> Products</a>
+        <a href="{{ url_for('manage_records', module='orders') }}"><span class="nav-icon">🛒</span> Orders</a>
+        <a href="{{ url_for('reports') }}"><span class="nav-icon">📊</span> Reports</a>
+        <a href="{{ url_for('notifications') }}" class="active"><span class="nav-icon">🔔</span> Notifications</a>
+        <a href="{{ url_for('settings') }}"><span class="nav-icon">⚙️</span> Settings</a>
+    </nav>
+
+    <div class="sidebar-profile">
+        <div class="profile-avatar">
+            {{ session.get('admin_username', 'A')[0]|upper }}
+        </div>
+        <div>
+            <strong>{{ session.get('admin_username', 'Admin') }}</strong>
+            <small>Super Administrator</small>
+        </div>
+    </div>
+</aside>
+
+<main class="main-content">
+    <header class="topbar">
+        <div class="topbar-left">
+            <button type="button" class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">☰</button>
+            <div class="topbar-title">
+                <h1>Notifications</h1>
+                <p>Premium Fresh Meat • Seller Announcements & Alerts</p>
+            </div>
+        </div>
+
+        <div class="topbar-actions">
+            <a href="{{ url_for('notifications') }}" class="notification-button" title="Notifications">🔔</a>
+            <a href="{{ url_for('logout') }}" class="logout-button">↪ Logout</a>
+        </div>
+    </header>
+
+    <div class="content">
+        <div style="margin-bottom: 18px;">
+            <a href="{{ url_for('dashboard') }}" class="back-btn">← Back to Dashboard</a>
+        </div>
+
+        {% with messages = get_flashed_messages(category_filter=['notification']) %}
+            {% for message in messages %}
+                <div style="background:var(--green-soft);color:var(--green-dark);border-left:4px solid var(--green);padding:13px 16px;border-radius:10px;margin-bottom:18px;font-weight:600;">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <div class="details-grid" style="margin-bottom:22px;">
+            <div class="stat-card">
+                <div class="stat-icon">🔔</div>
+                <div class="stat-info">
+                    <h3>Total Notifications</h3>
+                    <h2>{{ analytics.total }}</h2>
+                </div>
+            </div>
+            <div class="stat-card revenue">
+                <div class="stat-icon">🏪</div>
+                <div class="stat-info">
+                    <h3>Seller Notifications</h3>
+                    <h2>{{ analytics.sellers }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3>➕ Broadcast New Seller Notification</h3>
+            <form method="POST">
+                <input type="hidden" name="action" value="create">
+
+                <label style="display:block;font-weight:600;margin:12px 0 7px;">Notification Title</label>
+                <input type="text" id="title" name="title" placeholder="Enter notification title" maxlength="255" required style="width:100%;margin-bottom:14px;">
+
+                <label style="display:block;font-weight:600;margin-bottom:7px;">Message</label>
+                <textarea id="message" name="message" rows="3" placeholder="Enter announcement message for sellers..." required style="width:100%;margin-bottom:16px;"></textarea>
+
+                <button type="submit" class="create-btn">+ Send Notification to Sellers</button>
+            </form>
+        </div>
+
+        <div class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+                <h3 style="margin:0;">📢 All Notifications ({{ rows|length }})</h3>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <input type="text" id="searchInput" placeholder="Search title or message..." style="min-width:230px;">
+                    <button type="button" class="view-btn" onclick="clearFilters()">Clear</button>
+                </div>
+            </div>
+
+            {% if rows %}
+                <div id="notificationList" style="display:flex;flex-direction:column;gap:12px;">
+                    {% for row in rows %}
+                        <div class="notification" data-title="{{ row['title']|lower }}" data-message="{{ row['message']|lower }}"
+                             style="border:1px solid var(--border);border-left:4px solid var(--orange);background:var(--cream);border-radius:12px;padding:18px 20px;">
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+                                <div>
+                                    <h3 style="font-size:16px;margin-bottom:6px;">{{ row['title'] }}</h3>
+                                    <p style="color:var(--text);margin-bottom:10px;white-space:pre-wrap;">{{ row['message'] }}</p>
+                                    <div style="color:var(--muted);font-size:12px;">
+                                        <strong>Recipient:</strong> {{ row['shop_name'] or 'Seller' }}
+                                        {% if row['created_at'] %} | <strong>Created:</strong> {{ row['created_at'] }}{% endif %}
+                                    </div>
+                                </div>
+                                <form method="POST" onsubmit="return confirm('Delete this notification?');">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="notification_id" value="{{ row['id'] }}">
+                                    <button type="submit" class="delete-btn">🗑 Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div id="noResults" style="display:none;text-align:center;color:var(--muted);padding:28px;">No matching notifications found.</div>
+            {% else %}
+                <div style="text-align:center;color:var(--muted);padding:32px;">No notifications yet.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer>
+        <span>© 2026 <strong>Premium Fresh Meat</strong> Admin Panel. All Rights Reserved.</span>
+        <span>Quality Meat. Freshness You Can Trust.</span>
+    </footer>
+</main>
+
+<script>
+function toggleSidebar() {
+    if (window.innerWidth <= 760) {
+        document.body.classList.toggle("mobile-menu-open");
+    } else {
+        document.body.classList.toggle("sidebar-closed");
+    }
+}
+</script>
+<script>
+const searchInput = document.getElementById("searchInput");
+function filterNotifications() {
+    const search = searchInput.value.toLowerCase();
+    const items = document.querySelectorAll(".notification");
+    let visibleCount = 0;
+    items.forEach(item => {
+        const matches = item.dataset.title.includes(search) || item.dataset.message.includes(search);
+        item.style.display = matches ? "block" : "none";
+        if (matches) visibleCount++;
+    });
+    const noResults = document.getElementById("noResults");
+    if (noResults) noResults.style.display = visibleCount === 0 ? "block" : "none";
+}
+function clearFilters() {
+    searchInput.value = "";
+    filterNotifications();
+}
+if (searchInput) searchInput.addEventListener("input", filterNotifications);
+</script>
+</body>
+</html>
