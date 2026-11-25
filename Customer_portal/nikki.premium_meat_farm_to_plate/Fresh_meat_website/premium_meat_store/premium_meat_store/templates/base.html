@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Fresh Meat | Farm to Fork</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --green: #244b37;
+            --green-dark: #173728;
+            --cream: #f8f6ef;
+            --orange: #c87843;
+            --text: #292e28;
+            --muted: #777d73;
+            --white: #fff;
+            --border: #e8e6dc;
+        }
+        body {
+            background-color: var(--cream);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            padding-top: 110px;
+        }
+        .navbar-custom {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 12px rgba(23, 55, 40, 0.06);
+            padding: 12px 0;
+        }
+        .brand-logo {
+            height: 50px;
+            width: 50px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid var(--orange);
+        }
+        .brand-title {
+            font-weight: 800;
+            color: var(--green);
+            font-size: 1.25rem;
+            line-height: 1.1;
+        }
+        .brand-sub {
+            font-size: 0.7rem;
+            color: var(--orange);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .nav-link {
+            font-weight: 600;
+            color: var(--text) !important;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--orange) !important;
+        }
+        /* Icon Wrapper with Count Badge Directly ON TOP of the Icon (Hidden when 0) */
+        .nav-icon-box {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 6px;
+            margin-right: 4px;
+        }
+        .icon-top-badge {
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--orange);
+            color: var(--white);
+            font-size: 0.68rem;
+            font-weight: 800;
+            min-width: 19px;
+            height: 19px;
+            padding: 0 5px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--white);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+            line-height: 1;
+        }
+        /* Expandable Big Search Overlay Bar */
+        .search-trigger-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: var(--cream);
+            color: var(--green);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .search-trigger-btn:hover {
+            background: var(--green);
+            color: var(--white);
+            border-color: var(--green);
+        }
+        .search-backdrop-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(23, 55, 40, 0.48);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 1040;
+            transition: opacity 0.25s ease;
+        }
+        .search-backdrop-overlay.open {
+            display: block;
+        }
+        .expanded-search-bar {
+            display: none;
+            position: relative;
+            z-index: 1055;
+            background: linear-gradient(180deg, #ffffff 0%, #f8f6ef 100%);
+            border-top: 1px solid var(--border);
+            box-shadow: 0 20px 45px rgba(23, 55, 40, 0.18);
+            padding: 20px 0 22px;
+            animation: slideDown 0.22s ease-out;
+        }
+        .expanded-search-bar.open {
+            display: block;
+        }
+        .pro-search-pill {
+            background: #ffffff;
+            border: 2px solid var(--green);
+            border-radius: 50px;
+            padding: 5px 6px 5px 20px;
+            box-shadow: 0 6px 20px rgba(36, 75, 55, 0.08);
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        .pro-search-pill:focus-within {
+            border-color: var(--orange);
+            box-shadow: 0 8px 26px rgba(200, 120, 67, 0.22);
+        }
+        .pro-search-pill input {
+            border: none !important;
+            box-shadow: none !important;
+            font-size: 1rem;
+            background: transparent;
+        }
+        .search-chip {
+            display: inline-block;
+            padding: 4px 13px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: #ffffff;
+            color: var(--green);
+            border: 1px solid var(--border);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .search-chip:hover {
+            background: var(--green);
+            color: #ffffff;
+            border-color: var(--green);
+        }
+        #liveSearchResults {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 16px 36px rgba(23, 55, 40, 0.18);
+            margin-top: 8px;
+            z-index: 1065;
+            overflow: hidden;
+            display: none;
+        }
+        #liveSearchResults a:hover {
+            background-color: var(--cream);
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .btn-brand {
+            background-color: var(--green);
+            color: var(--white);
+            font-weight: 600;
+            border: none;
+            transition: all 0.2s;
+        }
+        .btn-brand:hover {
+            background-color: var(--green-dark);
+            color: var(--white);
+        }
+        .btn-accent {
+            background-color: var(--orange);
+            color: var(--white);
+            font-weight: 600;
+            border: none;
+            transition: all 0.2s;
+        }
+        .btn-accent:hover {
+            background-color: #b06534;
+            color: var(--white);
+        }
+        .btn-outline-brand {
+            border: 1.5px solid var(--green);
+            color: var(--green);
+            font-weight: 600;
+            background: transparent;
+        }
+        .btn-outline-brand:hover {
+            background-color: var(--green);
+            color: var(--white);
+        }
+        .card-themed {
+            background-color: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(23, 55, 40, 0.04);
+        }
+        .product-card {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            background: var(--white);
+            box-shadow: 0 4px 15px rgba(23, 55, 40, 0.05);
+            transition: transform 0.25s, box-shadow 0.25s;
+            height: 100%;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 26px rgba(23, 55, 40, 0.12);
+            border-color: var(--orange);
+        }
+        .product-img-wrap {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+            background: var(--cream);
+        }
+        .product-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+        .product-card:hover .product-img-wrap img {
+            transform: scale(1.05);
+        }
+        .badge-discount {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--green);
+            color: var(--white);
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            z-index: 2;
+        }
+        .badge-oos {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            background: var(--green-dark);
+            color: var(--cream);
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            border: 1px solid var(--orange);
+            z-index: 2;
+        }
+        .btn-wishlist {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            transition: transform 0.2s;
+            z-index: 3;
+            cursor: pointer;
+        }
+        .btn-wishlist:hover {
+            transform: scale(1.12);
+        }
+        .oos-img {
+            filter: grayscale(85%) opacity(0.75);
+        }
+        .text-brand-green { color: var(--green) !important; }
+        .text-brand-orange { color: var(--orange) !important; }
+        .text-brand-muted { color: var(--muted) !important; }
+        .bg-brand-green { background-color: var(--green) !important; }
+        .bg-brand-dark { background-color: var(--green-dark) !important; }
+        .bg-brand-cream { background-color: var(--cream) !important; }
+        .bg-brand-orange { background-color: var(--orange) !important; }
+        .pagination .page-link {
+            color: var(--green);
+            border-color: var(--border);
+            font-weight: 600;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: var(--green);
+            border-color: var(--green);
+            color: var(--white);
+        }
+        /* Non-jumping floating toast notification */
+        #liveToastBox {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1080;
+            min-width: 280px;
+            max-width: 380px;
+        }
+        footer {
+            background: var(--green-dark);
+            color: var(--cream);
+            margin-top: 60px;
+            padding: 45px 0 22px;
+        }
+
+        /* --- Farm-to-Plate Chicken-to-Meat Header Animation --- */
+        .farm-to-plate-banner {
+    background: linear-gradient(90deg, #173728 0%, #244b37 45%, #2f5e46 75%, #173728 100%);
+    border-bottom: 2px solid var(--orange);
+    height: 54px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1060;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+        .ftp-stage {
+            position: relative;
+            width: 100%;
+            max-width: 1140px;
+            margin: 0 auto;
+            height: 54px;
+            overflow: hidden;
+        }
+        .ftp-caption-left {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--cream);
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            z-index: 2;
+            background: rgba(23, 55, 40, 0.85);
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(200, 120, 67, 0.5);
+        }
+        .ftp-caption-right {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #fff;
+            font-size: 0.74rem;
+            font-weight: 700;
+            z-index: 2;
+            background: var(--orange);
+            padding: 3px 11px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        }
+
+        /* Running Chicken Container (Runs from 16% to 52%, then transforms) */
+        .ftp-chicken-runner {
+            position: absolute;
+            top: 7px;
+            left: 16%;
+            width: 44px;
+            height: 40px;
+            z-index: 4;
+            animation: chickenRunCycle 7s infinite ease-in-out;
+        }
+        /* Leg waddle inside chicken SVG */
+        .chicken-leg-l {
+            transform-origin: 18px 30px;
+            animation: legStrideA 0.28s infinite alternate ease-in-out;
+        }
+        .chicken-leg-r {
+            transform-origin: 24px 30px;
+            animation: legStrideB 0.28s infinite alternate ease-in-out;
+        }
+        .chicken-body-bob {
+            animation: bodyBob 0.28s infinite alternate ease-in-out;
+        }
+        @keyframes legStrideA {
+            0% { transform: rotate(-28deg); }
+            100% { transform: rotate(28deg); }
+        }
+        @keyframes legStrideB {
+            0% { transform: rotate(28deg); }
+            100% { transform: rotate(-28deg); }
+        }
+        @keyframes bodyBob {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-2.5px); }
+        }
+
+        @keyframes chickenRunCycle {
+            0% {
+                left: 14%;
+                opacity: 0;
+                transform: scale(0.85);
+            }
+            8% {
+                left: 18%;
+                opacity: 1;
+                transform: scale(1);
+            }
+            42% {
+                left: 48%;
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+            48% {
+                left: 51%;
+                opacity: 0;
+                transform: scale(1.35) rotate(15deg);
+            }
+            100% {
+                left: 51%;
+                opacity: 0;
+                transform: scale(0.5);
+            }
+        }
+
+        /* Sparkle / Fresh-Cut Transformation Puff at center (51%) */
+        .ftp-transform-burst {
+            position: absolute;
+            top: 6px;
+            left: 51%;
+            width: 46px;
+            height: 42px;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0;
+            animation: burstPopCycle 7s infinite ease-out;
+        }
+        @keyframes burstPopCycle {
+            0%, 42% { opacity: 0; transform: scale(0.3) rotate(0deg); }
+            47% { opacity: 1; transform: scale(1.2) rotate(25deg); }
+            55% { opacity: 0; transform: scale(1.5) rotate(50deg); }
+            100% { opacity: 0; }
+        }
+
+        /* Fresh Chicken Meat Cut Falling into Plate (52% -> 66%) */
+        .ftp-meat-drop {
+            position: absolute;
+            top: -36px;
+            left: 54%;
+            width: 44px;
+            height: 36px;
+            z-index: 4;
+            opacity: 0;
+            animation: meatFallIntoPlate 7s infinite cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes meatFallIntoPlate {
+            0%, 46% {
+                top: -34px;
+                left: 52%;
+                opacity: 0;
+                transform: rotate(-35deg) scale(0.7);
+            }
+            50% {
+                top: -6px;
+                left: 56%;
+                opacity: 1;
+                transform: rotate(-15deg) scale(1.05);
+            }
+            60% {
+                top: 12px;
+                left: 61%;
+                opacity: 1;
+                transform: rotate(0deg) scale(1);
+            }
+            64% {
+                top: 9px;
+                left: 61%;
+                transform: rotate(-4deg) scale(1.03);
+            }
+            68%, 88% {
+                top: 12px;
+                left: 61%;
+                opacity: 1;
+                transform: rotate(0deg) scale(1);
+            }
+            96%, 100% {
+                top: 12px;
+                left: 68%;
+                opacity: 0;
+                transform: scale(0.85);
+            }
+        }
+
+        /* Serving Plate Waiting & Sliding Smoothly */
+        .ftp-plate {
+            position: absolute;
+            bottom: 4px;
+            left: 59.5%;
+            width: 64px;
+            height: 20px;
+            z-index: 3;
+            opacity: 0;
+            animation: plateArriveAndServe 7s infinite ease-in-out;
+        }
+        @keyframes plateArriveAndServe {
+            0%, 38% {
+                left: 66%;
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            46%, 60% {
+                left: 59.5%;
+                opacity: 1;
+                transform: scale(1);
+            }
+            62% {
+                left: 59.5%;
+                transform: scaleX(1.08) scaleY(0.92);
+            }
+            66%, 88% {
+                left: 59.5%;
+                opacity: 1;
+                transform: scale(1);
+            }
+            96%, 100% {
+                left: 66.5%;
+                opacity: 0;
+            }
+        }
+
+        /* Freshness Steam / Aroma Waves rising from plated meat */
+        .ftp-aroma {
+            position: absolute;
+            top: 2px;
+            left: 62%;
+            width: 30px;
+            height: 16px;
+            z-index: 5;
+            opacity: 0;
+            animation: aromaRise 7s infinite ease-in-out;
+        }
+        @keyframes aromaRise {
+            0%, 64% { opacity: 0; transform: translateY(4px); }
+            72%, 84% { opacity: 0.95; transform: translateY(-3px); }
+            92%, 100% { opacity: 0; transform: translateY(-8px); }
+        }
+
+        /* Subtle Logo & Nav Link Polish */
+        .brand-logo {
+            transition: transform 0.3s ease;
+        }
+        .navbar-brand:hover .brand-logo {
+            transform: scale(1.06) rotate(-3deg);
+        }
+        @media (max-width: 768px) {
+            .ftp-caption-left, .ftp-caption-right {
+                font-size: 0.65rem;
+                padding: 2px 7px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Farm-to-Plate Animated Header Strip: Running Chicken -> Fresh Meat Cut Falling into Plate -->
+<div class="farm-to-plate-banner" aria-label="Farm to Plate Fresh Meat Animation">
+    <div class="ftp-stage">
+        <span class="ftp-caption-left d-none d-sm-inline-block">
+            <i class="fas fa-leaf text-brand-orange me-1"></i> Farm Fresh &amp; Antibiotic-Free
+        </span>
+
+        <!-- 1. Running Farm Chicken SVG -->
+        <div class="ftp-chicken-runner">
+            <svg viewBox="0 0 64 56" width="44" height="40" xmlns="http://www.w3.org/2000/svg">
+                <!-- Legs -->
+                <g class="chicken-leg-l" stroke="#f59e0b" stroke-width="2.6" stroke-linecap="round">
+                    <line x1="26" y1="38" x2="22" y2="50"/>
+                    <line x1="22" y1="50" x2="28" y2="50"/>
+                </g>
+                <g class="chicken-leg-r" stroke="#d97706" stroke-width="2.6" stroke-linecap="round">
+                    <line x1="34" y1="38" x2="38" y2="50"/>
+                    <line x1="38" y1="50" x2="44" y2="50"/>
+                </g>
+                <!-- Body -->
+                <g class="chicken-body-bob">
+                    <!-- Tail feathers -->
+                    <path d="M12 26 C6 20, 8 14, 15 19 C11 13, 16 10, 20 17 Z" fill="#f8f6ef"/>
+                    <!-- Plump White Body -->
+                    <ellipse cx="30" cy="29" rx="16" ry="12" fill="#ffffff" stroke="#e8e6dc" stroke-width="1.5"/>
+                    <!-- Wing -->
+                    <path d="M23 27 Q31 22 36 30 Q29 35 23 27 Z" fill="#f1efe6" stroke="#dcd9cc" stroke-width="1.2"/>
+                    <!-- Neck & Head -->
+                    <circle cx="43" cy="18" r="8.5" fill="#ffffff"/>
+                    <!-- Red Comb -->
+                    <path d="M39 10 C39 6, 43 6, 43 9 C44 5, 48 6, 47 10 C49 8, 51 11, 48 13 Z" fill="#e63946"/>
+                    <!-- Beak -->
+                    <polygon points="51,17 58,20 51,22" fill="#f59e0b"/>
+                    <!-- Wattle -->
+                    <circle cx="49" cy="24" r="2.6" fill="#e63946"/>
+                    <!-- Eye -->
+                    <circle cx="45.5" cy="17" r="1.6" fill="#173728"/>
+                </g>
+            </svg>
+        </div>
+
+        <!-- 2. Fresh-Cut Transformation Sparkle Burst -->
+        <div class="ftp-transform-burst">
+            <svg viewBox="0 0 60 60" width="46" height="42" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="30" cy="30" r="16" fill="rgba(255,255,255,0.22)"/>
+                <path d="M30 4 L34 22 L52 16 L38 30 L52 44 L34 38 L30 56 L26 38 L8 44 L22 30 L8 16 L26 22 Z" fill="#fbbf24" opacity="0.9"/>
+                <circle cx="30" cy="30" r="7" fill="#ffffff"/>
+            </svg>
+        </div>
+
+        <!-- 3. Juicy Chicken Meat Cut Falling into Plate -->
+        <div class="ftp-meat-drop">
+            <svg viewBox="0 0 64 48" width="44" height="36" xmlns="http://www.w3.org/2000/svg">
+                <!-- Bone -->
+                <rect x="38" y="21" width="18" height="6" rx="3" fill="#fff8eb" stroke="#e5dcc5" stroke-width="1.2"/>
+                <circle cx="56" cy="20" r="3.5" fill="#fff8eb"/>
+                <circle cx="56" cy="27" r="3.5" fill="#fff8eb"/>
+                <!-- Fresh Tender Chicken Cut / Drumstick Meat -->
+                <path d="M10 24 C10 12, 26 10, 38 17 C43 20, 43 28, 38 31 C26 38, 10 36, 10 24 Z" fill="#f4978e" stroke="#e07a5f" stroke-width="1.5"/>
+                <!-- Fresh Marbling / Highlight -->
+                <path d="M16 20 Q24 16 32 20" stroke="#ffd6d1" stroke-width="2" stroke-linecap="round" fill="none"/>
+                <!-- Fresh Herb Leaf -->
+                <ellipse cx="24" cy="14" rx="4.5" ry="2.2" transform="rotate(-18 24 14)" fill="#2a9d8f"/>
+            </svg>
+        </div>
+
+        <!-- 4. Ceramic Serving Plate -->
+        <div class="ftp-plate">
+            <svg viewBox="0 0 90 28" width="64" height="20" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="45" cy="18" rx="42" ry="8" fill="#d8d5c8"/>
+                <ellipse cx="45" cy="15" rx="42" ry="8" fill="#ffffff" stroke="#c87843" stroke-width="1.5"/>
+                <ellipse cx="45" cy="15" rx="28" ry="4.5" fill="none" stroke="#e8e6dc" stroke-width="1.2"/>
+            </svg>
+        </div>
+
+        <!-- 5. Chilled Freshness Sparkles Above Plate -->
+        <div class="ftp-aroma">
+            <svg viewBox="0 0 40 24" width="30" height="16" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 18 Q8 12 11 6" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" fill="none"/>
+                <path d="M20 16 Q18 10 21 4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none"/>
+                <path d="M30 18 Q28 12 31 6" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" fill="none"/>
+            </svg>
+        </div>
+
+        <span class="ftp-caption-right d-none d-md-inline-block">
+            <i class="fas fa-snowflake me-1"></i> Cut Fresh &amp; Served Chilled
+        </span>
+    </div>
+</div>
+
+<!-- Navigation Bar -->
+ <nav class="navbar navbar-expand-lg navbar-custom"
+     style="position: fixed; top: 54px; left: 0; width: 100%; z-index: 1055;">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='logo.png', v='2') }}" alt="Premium Fresh Meat Logo" class="brand-logo">
+            <div>
+                <div class="brand-title">PREMIUM FRESH MEAT</div>
+                <div class="brand-sub">100% Hygienic &amp; Antibiotic-Free</div>
+            </div>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ms-auto align-items-center gap-3">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}">Home</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Shop</a>
+                    <ul class="dropdown-menu shadow border-0" style="background: var(--white); border: 1px solid var(--border) !important;">
+                        <li><a class="dropdown-item" href="{{ url_for('products', category='All') }}">All Meats</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ url_for('products', category='Chicken') }}"><i class="fas fa-drumstick-bite text-brand-orange me-2"></i>Chicken</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('products', category='Mutton') }}"><i class="fas fa-bacon text-brand-green me-2"></i>Mutton</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('products', category='Fish') }}"><i class="fas fa-fish text-brand-green me-2"></i>Fish</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('products', category='Seafood') }}"><i class="fas fa-shrimp text-brand-orange me-2"></i>Seafood</a></li>
+                    </ul>
+                </li>
+
+                <!-- Compact Search Icon Button (Tap to reveal Big Search Bar) -->
+                <li class="nav-item">
+                    <button type="button" class="search-trigger-btn" id="toggleSearchBtn" title="Search Products" aria-label="Search Products">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </li>
+
+                <!-- Wishlist with Count ON TOP of Icon (Hidden when 0) -->
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-1" href="{{ url_for('wishlist') }}">
+                        <span class="nav-icon-box">
+                            <span id="navWishlistBadge" class="icon-top-badge" style="{% if wishlist_count < 1 %}display: none;{% endif %}">{{ wishlist_count }}</span>
+                            <i class="fas fa-heart fs-5 text-brand-orange"></i>
+                        </span>
+                        <span>Wishlist</span>
+                    </a>
+                </li>
+
+                <!-- Cart with Count ON TOP of Icon (Hidden when 0) -->
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-1" href="{{ url_for('cart') }}">
+                        <span class="nav-icon-box">
+                            <span id="navCartBadge" class="icon-top-badge" style="{% if cart_count < 1 %}display: none;{% endif %}">{{ cart_count }}</span>
+                            <i class="fas fa-shopping-cart fs-5 text-brand-green"></i>
+                        </span>
+                        <span>Cart</span>
+                    </a>
+                </li>
+
+                {% if current_user %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('orders') }}"><i class="fas fa-box-open me-1 text-brand-orange"></i>Orders</a></li>
+                <li class="nav-item dropdown">
+                    <a class="btn btn-outline-brand btn-sm dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-1"></i> {{ current_user }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                        <li><a class="dropdown-item" href="{{ url_for('account') }}"><i class="fas fa-id-card me-2 text-brand-green"></i>My Account</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('wishlist') }}"><i class="fas fa-heart me-2 text-brand-orange"></i>My Wishlist</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('orders') }}"><i class="fas fa-receipt me-2 text-brand-green"></i>Order History</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('notifications') }}"><i class="fas fa-bell me-2 text-brand-orange"></i>Notifications</a></li>
+
+<li>
+    <a class="dropdown-item"
+       href="{{ url_for('help_support') }}">
+        <i class="fas fa-headset me-2 text-brand-green"></i>
+        Help & Support
+    </a>
+</li>
+<li>
+    <a class="dropdown-item"
+       href="{{ url_for('privacy_policy') }}">
+        <i class="fas fa-shield-alt me-2 text-brand-green"></i>
+        Privacy Policy
+    </a>
+</li>
+
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="btn btn-brand btn-sm px-3 py-2" href="{{ url_for('auth', mode='login') }}">
+                        <i class="fas fa-user me-1"></i> Login / Register
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Professional Search Bar with Frosted Backdrop & Live Suggestions -->
+    <div id="expandedSearchBar" class="expanded-search-bar {% if request.args.get('q') %}open{% endif %}">
+        <div class="container" style="max-width: 780px;">
+            <form action="{{ url_for('products') }}" method="GET" class="position-relative">
+                <div class="pro-search-pill d-flex align-items-center gap-2">
+                    <i class="fas fa-search text-brand-green fs-5"></i>
+                    <input type="text" name="q" id="bigSearchInput" autocomplete="off" class="form-control" placeholder="Search fresh Chicken, Mutton, Vanjaram Fish, Tiger Prawns..." value="{{ request.args.get('q', '') }}">
+                    <button type="button" id="clearSearchInputBtn" class="btn btn-sm text-muted border-0 {% if not request.args.get('q') %}d-none{% endif %}" title="Clear text">
+                        <i class="fas fa-times-circle"></i>
+                    </button>
+                    <button class="btn btn-brand rounded-pill px-4 py-2 fw-bold" type="submit">Search</button>
+                    <button type="button" class="btn btn-light rounded-circle ms-1" id="closeSearchBtn" title="Close Search" style="width: 38px; height: 38px;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="liveSearchResults"></div>
+            </form>
+            <div class="d-flex flex-wrap align-items-center gap-2 mt-3 ps-2">
+                <span class="small fw-bold text-brand-muted">Popular Cuts:</span>
+                <a href="{{ url_for('products', q='Chicken Curry Cut') }}" class="search-chip">Chicken Curry Cut</a>
+                <a href="{{ url_for('products', q='Mutton') }}" class="search-chip">Tender Mutton</a>
+                <a href="{{ url_for('products', q='Vanjaram') }}" class="search-chip">Vanjaram Steaks</a>
+                <a href="{{ url_for('products', q='Tiger Prawns') }}" class="search-chip">Tiger Prawns</a>
+                <a href="{{ url_for('products', q='Boneless') }}" class="search-chip">Boneless Fillets</a>
+            </div>
+        </div>
+    </div>
+</nav>
+<div id="searchBackdrop" class="search-backdrop-overlay"></div>
+
+<!-- Flash Messages -->
+<div class="container mt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+<!-- Floating Toast Notification (For background Add-to-Cart / Wishlist without scrolling) -->
+<div id="liveToastBox"></div>
+
+<!-- Main Page Content -->
+{% block content %}{% endblock %}
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <img src="{{ url_for('static', filename='logo.png', v='2') }}" alt="Logo" class="brand-logo">
+                    <h5 class="text-white fw-bold mb-0">PREMIUM FRESH MEAT</h5>
+                </div>
+                <p class="small" style="color: #d6d4c9;">Chilled between 0°C – 4°C from farm to your doorstep. 100% Halal-certified, chemical-free, and freshly cut after you order.</p>
+            </div>
+            <div class="col-md-4">
+                <h6 class="text-white fw-bold mb-3">Quick Categories</h6>
+                <ul class="list-unstyled small">
+                    <li class="mb-1"><a href="{{ url_for('products', category='Chicken') }}" class="text-decoration-none" style="color: var(--cream);">Farm Fresh Chicken</a></li>
+                    <li class="mb-1"><a href="{{ url_for('products', category='Mutton') }}" class="text-decoration-none" style="color: var(--cream);">Tender Goat &amp; Mutton</a></li>
+                    <li class="mb-1"><a href="{{ url_for('products', category='Fish') }}" class="text-decoration-none" style="color: var(--cream);">Marine &amp; Freshwater Fish</a></li>
+                    <li class="mb-1"><a href="{{ url_for('products', category='Seafood') }}" class="text-decoration-none" style="color: var(--cream);">Coastal Prawns &amp; Crabs</a></li>
+                    <li class="mb-1"><a href="{{ url_for('wishlist') }}" class="text-decoration-none text-brand-orange fw-bold">My Saved Wishlist</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h6 class="text-white fw-bold mb-3">Customer Support</h6>
+                <p class="small mb-1"><i class="fas fa-phone-alt text-brand-orange me-2"></i> <a href="tel:+919876543210">
+    +91 98765 43210
+</a></p>
+                <p class="small mb-1"><i class="fas fa-envelope text-brand-orange me-2"></i><a href="mailto:support@premiumfreshmeat.in">
+    support@premiumfreshmeat.in
+</a></p>
+                <p class="small"><i class="fas fa-clock text-brand-orange me-2"></i> Express Delivery: 7:00 AM – 10:00 PM</p>
+            </div>
+        </div>
+        <hr style="border-color: rgba(232, 230, 220, 0.2);" class="my-3">
+        <div class="text-center small" style="color: #b7b5aa;">&copy; 2026 Premium Fresh Meat Store. All rights reserved.</div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// 1. Professional Expandable Search Bar with Backdrop & Live Autocomplete
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('toggleSearchBtn');
+    const closeBtn = document.getElementById('closeSearchBtn');
+    const searchBar = document.getElementById('expandedSearchBar');
+    const searchInput = document.getElementById('bigSearchInput');
+    const backdrop = document.getElementById('searchBackdrop');
+    const clearBtn = document.getElementById('clearSearchInputBtn');
+    const resultsBox = document.getElementById('liveSearchResults');
+
+    function openSearch() {
+        if (!searchBar) return;
+        searchBar.classList.add('open');
+        if (backdrop) backdrop.classList.add('open');
+        if (searchInput) searchInput.focus();
+    }
+    function closeSearch() {
+        if (!searchBar) return;
+        searchBar.classList.remove('open');
+        if (backdrop) backdrop.classList.remove('open');
+        if (resultsBox) resultsBox.style.display = 'none';
+    }
+
+    if (toggleBtn && searchBar) {
+        toggleBtn.addEventListener('click', function() {
+            if (searchBar.classList.contains('open')) {
+                closeSearch();
+            } else {
+                openSearch();
+            }
+        });
+    }
+    if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+    if (backdrop) backdrop.addEventListener('click', closeSearch);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeSearch();
+    });
+
+    if (clearBtn && searchInput) {
+        clearBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            clearBtn.classList.add('d-none');
+            if (resultsBox) resultsBox.style.display = 'none';
+            searchInput.focus();
+        });
+    }
+
+    if (searchInput && resultsBox) {
+        searchInput.addEventListener('input', function() {
+            const val = this.value.trim();
+            if (clearBtn) clearBtn.classList.toggle('d-none', val.length === 0);
+            if (val.length < 1) {
+                resultsBox.style.display = 'none';
+                return;
+            }
+            fetch('/api/search-suggestions?q=' + encodeURIComponent(val))
+                .then(r => r.json())
+                .then(items => {
+                    if (!items.length) {
+                        resultsBox.innerHTML = '<div class="p-3 text-center small text-muted">No matching fresh cuts found.</div>';
+                    } else {
+                        resultsBox.innerHTML = items.map(p => `
+                            <a href="/product/${p.id}" class="d-flex align-items-center justify-content-between p-2 px-3 text-decoration-none border-bottom" style="color: var(--text);">
+                                <div class="d-flex align-items-center gap-3">
+                                    <img src="${p.image_url}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;">
+                                    <div>
+                                        <div class="fw-bold small">${p.name}</div>
+                                        <span class="badge bg-light text-dark border">${p.category}</span>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold text-brand-green">₹${p.price}/kg</div>
+                                    <small class="${p.in_stock ? 'text-success' : 'text-danger'}">${p.in_stock ? 'In Stock' : 'Sold Out'}</small>
+                                </div>
+                            </a>
+                        `).join('');
+                    }
+                    resultsBox.style.display = 'block';
+                });
+        });
+    }
+});
+
+// Helper to show non-jumping toast message
+function showToastMessage(msg, isError) {
+    const box = document.getElementById('liveToastBox');
+    const toast = document.createElement('div');
+    toast.className = 'alert ' + (isError ? 'alert-danger' : 'alert-success') + ' shadow-lg border-0 mb-2 py-2 px-3 d-flex align-items-center justify-content-between';
+    toast.style.backgroundColor = isError ? '#8b2626' : '#244b37';
+    toast.style.color = '#ffffff';
+    toast.innerHTML = '<span class="small fw-semibold"><i class="fas ' + (isError ? 'fa-exclamation-circle' : 'fa-check-circle') + ' me-2"></i>' + msg + '</span>';
+    box.appendChild(toast);
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+    }, 2400);
+}
+
+// Helper to update Top Icon Badges (only show if count >= 1)
+function updateTopIconBadge(elId, count) {
+    const badge = document.getElementById(elId);
+    if (!badge) return;
+    if (count >= 1) {
+        badge.textContent = count;
+        badge.style.display = 'flex';
+    } else {
+        badge.textContent = '';
+        badge.style.display = 'none';
+    }
+}
+
+// 2. Intercept Add-to-Cart & Wishlist Forms via Fetch (Zero page reload, Zero scroll to top!)
+document.addEventListener('submit', function(e) {
+    const form = e.target;
+
+    // Add to Cart without page jump
+    if (form.classList.contains('js-cart-form')) {
+        e.preventDefault();
+        const formData = new FormData(form);
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                updateTopIconBadge('navCartBadge', data.cart_count);
+                showToastMessage(data.message, false);
+            } else {
+                showToastMessage(data.message || 'Could not add item.', true);
+            }
+        })
+        .catch(() => form.submit());
+    }
+
+    // Toggle Wishlist without page jump
+    if (form.classList.contains('js-wishlist-form')) {
+        e.preventDefault();
+        const formData = new FormData(form);
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                updateTopIconBadge('navWishlistBadge', data.wishlist_count);
+                const icon = form.querySelector('i');
+                const labelSpan = form.querySelector('.js-wishlist-label');
+                if (icon) {
+                    if (data.in_wishlist) {
+                        icon.className = 'fas fa-heart text-brand-orange' + (labelSpan ? ' me-1' : '');
+                    } else {
+                        icon.className = 'far fa-heart text-brand-green' + (labelSpan ? ' me-1' : '');
+                    }
+                }
+                if (labelSpan) {
+                    labelSpan.textContent = data.in_wishlist ? 'Saved in Wishlist' : 'Add to Wishlist';
+                }
+                // If on wishlist page, remove card smoothly when un-wishlisted
+                if (!data.in_wishlist && form.dataset.removeCard === 'true') {
+                    const col = form.closest('.js-wishlist-card');
+                    if (col) col.remove();
+                    if (data.wishlist_count === 0) location.reload();
+                }
+                showToastMessage(data.message, false);
+            }
+        })
+        .catch(() => form.submit());
+    }
+});
+</script>
+</body>
+</html>
